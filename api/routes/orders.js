@@ -4,8 +4,9 @@ const mongoose = require('mongoose')
 
 const Order = require('../models/order')
 const Product = require('../models/product')
+const checkAuth = require('../middleware/checkAuth')
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Order.find().select('product quantity _id')
     .populate('product')
     .exec()
@@ -18,7 +19,7 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
     Product.findById(req.body.productId)
     .then(product => {
         if (!product) {
@@ -69,7 +70,7 @@ router.get('/:orderId', (req, res, next) => {
     })
 })
 
-router.delete('/:orderId', (req, res, next) => {
+router.delete('/:orderId', checkAuth, (req, res, next) => {
     let id = req.params.orderId;
     Order.remove({ _id: id }).exec()
         .then(result => {
